@@ -1,34 +1,30 @@
-#[allow(dead_code)]
+pub type SignedCounter = isize;
+pub type UnsignedCounter = usize;
 
-pub mod counter {
-    pub type SignedCounter = isize;
-    pub type UnsignedCounter = usize;
+pub fn default_signed_counter() -> SignedCounter {
+    0
+}
 
-    pub fn default_signed_counter() -> SignedCounter {
-        0
-    }
+pub fn default_unsigned_counter() -> UnsignedCounter {
+    0
+}
 
-    pub fn default_unsigned_counter() -> UnsignedCounter {
-        0
-    }
+pub fn next_signed(counter: SignedCounter) -> SignedCounter {
+    counter + 1
+}
 
-    pub fn next_signed(counter: SignedCounter) -> SignedCounter {
-        counter + 1
-    }
+pub fn next_unsigned(counter: UnsignedCounter) -> UnsignedCounter {
+    counter + 1
+}
 
-    pub fn next_unsigned(counter: UnsignedCounter) -> UnsignedCounter {
-        counter + 1
-    }
-
-    pub fn prev_signed(counter: SignedCounter) -> SignedCounter {
-        counter - 1
-    }
+pub fn prev_signed(counter: SignedCounter) -> SignedCounter {
+    counter - 1
 }
 
 #[cfg(test)]
 mod tests {
 
-    use crate::counter::counter::{
+    use crate::counter::{
         default_signed_counter, default_unsigned_counter, next_signed, next_unsigned, prev_signed,
     };
 
