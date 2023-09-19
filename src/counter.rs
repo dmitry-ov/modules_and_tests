@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub type SignedCounter = isize;
 pub type UnsignedCounter = usize;
 

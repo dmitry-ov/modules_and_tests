@@ -1,4 +1,5 @@
-#[allow(dead_code)]
+#![allow(dead_code)]
+
 mod counter;
 mod pair;
-mod vec3;
+mod vector;
