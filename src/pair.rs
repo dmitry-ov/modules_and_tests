@@ -1,46 +1,75 @@
 #![allow(dead_code)]
 
-pub type Pair = (i32, i32);
+mod pair {
+    #[derive(Debug, PartialEq)]
+    pub struct Pair {
+        item: (i32, i32),
+    }
 
-pub fn default_pair() -> Pair {
-    (0, 0)
-}
+    impl Pair {
+        pub fn default_pair() -> Self {
+            Self { item: (0, 0) }
+        }
 
-pub fn pair_vector_sum(a: Pair, b: Pair) -> Pair {
-    (a.0 + b.0, a.1 + b.1)
-}
+        pub fn init(source: (i32, i32)) -> Self {
+            Self { item: source }
+        }
 
-pub fn pair_scalar_sum(a: Pair, b: Pair) -> i32 {
-    a.0 + a.1 + b.0 + b.1
+        pub fn get_value(&self) -> (&i32, &i32) {
+            (&self.item.0, &self.item.1)
+        }
+
+        pub fn vector_sum(a: Pair, b: Pair) -> Pair {
+            Pair::init((a.item.0 + b.item.0, a.item.1 + b.item.1))
+        }
+
+        pub fn scalar_sum(a: Pair, b: Pair) -> i32 {
+            a.item.0 + a.item.1 + b.item.0 + b.item.1
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-
-    use crate::pair::{default_pair, pair_scalar_sum, pair_vector_sum};
+    use crate::pair::pair::Pair;
 
     #[test]
     fn test_default_pair() {
-        assert_eq!((0, 0), default_pair());
+        let empty = Pair::default_pair();
+        assert_eq!((&0, &0), empty.get_value());
     }
 
     #[test]
     fn test_pair_vector_sum() {
         assert_eq!(
-            default_pair(),
-            pair_vector_sum(default_pair(), default_pair())
+            Pair::default_pair(),
+            Pair::vector_sum(Pair::default_pair(), Pair::default_pair())
         );
-        let one_one = (1, 1);
-        assert_eq!(one_one, pair_vector_sum(default_pair(), one_one));
-        assert_eq!((2, 2), pair_vector_sum(one_one, one_one));
+        assert_eq!(
+            (&1, &1),
+            Pair::vector_sum(Pair::default_pair(), Pair::init((1, 1))).get_value()
+        );
+
+        let pair1 = Pair::init((1, 1));
+        let pair2 = Pair::init((2, 2));
+        assert_eq!((&3, &3), Pair::vector_sum(pair1, pair2).get_value());
     }
 
     #[test]
     fn test_pair_scalar_sum() {
         let zero_zero = (0, 0);
         let one_one = (1, 1);
-        assert_eq!(0, pair_scalar_sum(zero_zero, zero_zero));
-        assert_eq!(2, pair_scalar_sum(zero_zero, one_one));
-        assert_eq!(4, pair_scalar_sum(one_one, one_one));
+        assert_eq!(
+            0,
+            Pair::scalar_sum(Pair::init(zero_zero), Pair::init(zero_zero))
+        );
+        assert_eq!(
+            2,
+            Pair::scalar_sum(Pair::init(zero_zero), Pair::init(one_one))
+        );
+        assert_eq!(
+            4,
+            Pair::scalar_sum(Pair::init(one_one), Pair::init(one_one))
+        );
     }
 }
