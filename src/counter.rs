@@ -1,62 +1,112 @@
 #![allow(dead_code)]
 
-pub type SignedCounter = isize;
-pub type UnsignedCounter = usize;
+mod custom_counters {
+    pub struct SignedCounter {
+        item: isize,
+    }
 
-pub fn default_signed_counter() -> SignedCounter {
-    0
-}
+    pub struct UnsignedCounter {
+        item: usize,
+    }
 
-pub fn default_unsigned_counter() -> UnsignedCounter {
-    0
-}
+    impl SignedCounter {
+        pub fn default_signed() -> Self {
+            Self { item: 0 }
+        }
 
-pub fn next_signed(counter: SignedCounter) -> SignedCounter {
-    counter + 1
-}
+        pub fn new(x: isize) -> Self {
+            Self { item: x }
+        }
 
-pub fn next_unsigned(counter: UnsignedCounter) -> UnsignedCounter {
-    counter + 1
-}
+        pub fn get_value(&self) -> isize {
+            self.item
+        }
 
-pub fn prev_signed(counter: SignedCounter) -> SignedCounter {
-    counter - 1
+        pub fn next_signed(&mut self) {
+            self.item += 1;
+        }
+
+        pub fn prev_signed(&mut self) {
+            self.item -= 1;
+        }
+    }
+
+    impl UnsignedCounter {
+        pub fn default_unsigned() -> UnsignedCounter {
+            Self { item: 0 }
+        }
+
+        pub fn new(x: usize) -> Self {
+            Self { item: x }
+        }
+
+        pub fn get_value(&self) -> usize {
+            self.item
+        }
+
+        pub fn next_unsigned(&mut self) {
+            self.item += 1;
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
-
-    use crate::counter::{
-        default_signed_counter, default_unsigned_counter, next_signed, next_unsigned, prev_signed,
-    };
+    use crate::counter::custom_counters::{SignedCounter, UnsignedCounter};
 
     #[test]
-    fn test_prev_signed() {
-        assert_eq!(-1001, prev_signed(-1000));
-        assert_eq!(-2, prev_signed(-1));
-        assert_eq!(-1, prev_signed(0));
-        assert_eq!(0, prev_signed(1));
-        assert_eq!(1, prev_signed(2));
-        assert_eq!(99, prev_signed(100));
+    fn signed_default() {
+        assert_eq!(0, SignedCounter::default_signed().get_value());
     }
 
     #[test]
-    fn test_next_unsigned() {
-        assert_eq!(1, next_unsigned(0));
-        assert_eq!(2, next_unsigned(1));
-        assert_eq!(99, next_unsigned(98));
+    fn unsigned_default() {
+        assert_eq!(0, UnsignedCounter::default_unsigned().get_value());
     }
 
     #[test]
-    fn test_next_signed() {
-        assert_eq!(1, next_signed(0));
-        assert_eq!(2, next_signed(1));
-        assert_eq!(0, next_signed(-1));
+    fn signed_new() {
+        assert_eq!(-1, SignedCounter::new(-1).get_value());
+        assert_eq!(0, SignedCounter::new(0).get_value());
+        assert_eq!(5, SignedCounter::new(5).get_value());
     }
 
     #[test]
-    fn test_counter_default() {
-        assert_eq!(0, default_signed_counter());
-        assert_eq!(0, default_unsigned_counter());
+    fn unsigned_new() {
+        assert_eq!(0, UnsignedCounter::new(0).get_value());
+        assert_eq!(1, UnsignedCounter::new(1).get_value());
+    }
+
+    #[test]
+    fn next_signed() {
+        let mut signed_counter = SignedCounter::default_signed();
+        signed_counter.next_signed();
+        assert_eq!(1, signed_counter.get_value());
+
+        let mut counter = SignedCounter::new(-1);
+        counter.next_signed();
+        assert_eq!(0, counter.get_value());
+    }
+
+    #[test]
+    fn prev_signed() {
+        let mut signed_counter = SignedCounter::default_signed();
+        signed_counter.prev_signed();
+        assert_eq!(-1, signed_counter.get_value());
+
+        let mut counter = SignedCounter::new(1);
+        counter.prev_signed();
+        assert_eq!(0, counter.get_value());
+    }
+
+    #[test]
+    fn next_unsigned() {
+        let mut unsigned_counter = UnsignedCounter::default_unsigned();
+        unsigned_counter.next_unsigned();
+        assert_eq!(1, unsigned_counter.get_value());
+
+        let mut counter = UnsignedCounter::new(1);
+        counter.next_unsigned();
+        assert_eq!(2, counter.get_value());
     }
 }

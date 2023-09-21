@@ -1,44 +1,39 @@
 #![allow(dead_code)]
 
-mod vector {
+mod custom_vector {
     pub const VECTOR_LENGTH: usize = 3;
 
-    #[derive(Debug, PartialEq)]
     pub struct Vector {
         values: [i32; VECTOR_LENGTH],
     }
 
     impl Vector {
-        pub fn get_values(&self) -> [i32; VECTOR_LENGTH] {
-            self.values
-        }
-
-        pub fn set_values(&mut self, a: [i32; VECTOR_LENGTH]) {
-            self.values = a
-        }
-
-        pub fn new() -> Self {
+        pub fn default() -> Self {
             Self {
                 values: [0; VECTOR_LENGTH],
             }
         }
 
-        pub fn init(a: [i32; VECTOR_LENGTH]) -> Self {
-            Self { values: a }
+        pub fn new(x: [i32; VECTOR_LENGTH]) -> Self {
+            Self { values: x }
         }
 
-        pub fn vector_sum(&self, x: &Vector) -> Vector {
-            let mut result = Vector::new();
-            for i in 0..VECTOR_LENGTH {
-                result.values[i] = self.values[i] + x.get_values()[i];
-            }
-            result
+        pub fn get_value(&self) -> [i32; VECTOR_LENGTH] {
+            self.values
         }
 
-        pub fn scalar_sum(&self, x: &Vector) -> i32 {
+        pub fn vector_sum(a: Vector, b: Vector) -> Vector {
+            Vector::new([
+                a.get_value()[0] + b.get_value()[0],
+                a.get_value()[1] + b.get_value()[1],
+                a.get_value()[2] + b.get_value()[2],
+            ])
+        }
+
+        pub fn scalar_sum(a: Vector, b: Vector) -> i32 {
             let mut sum = 0;
             for i in 0..VECTOR_LENGTH {
-                sum += self.values[i] + x.get_values()[i];
+                sum += a.get_value()[i] + b.get_value()[i];
             }
             sum
         }
@@ -47,34 +42,44 @@ mod vector {
 
 #[cfg(test)]
 mod tests {
-    use crate::vector::vector::Vector;
+    use crate::vector::custom_vector::Vector;
+
+    #[test]
+    fn default_vector() {
+        assert_eq!([0, 0, 0], Vector::default().get_value());
+    }
 
     #[test]
     fn new_vector() {
-        assert_eq!([0, 0, 0], Vector::new().get_values());
+        assert_eq!([1, 2, 3], Vector::new([1, 2, 3]).get_value());
     }
 
     #[test]
-    fn empty_vector_adding() {
-        let a = Vector::new();
-        let b = a.vector_sum(&Vector::new());
-
-        assert_eq!(Vector::new(), b);
-        assert_eq!(Vector::new().get_values(), b.get_values());
+    fn vector_adding() {
+        assert_eq!(
+            [0, 0, 0],
+            Vector::vector_sum(Vector::default(), Vector::default()).get_value()
+        );
+        assert_eq!(
+            [3, 3, 3],
+            Vector::vector_sum(Vector::new([1, 1, 1]), Vector::new([2, 2, 2])).get_value()
+        );
+        assert_eq!(
+            [-3, -1, -5],
+            Vector::vector_sum(Vector::new([-10, 0, 5]), Vector::new([7, -1, -10])).get_value()
+        );
     }
 
     #[test]
-    fn one_vector_adding() {
-        let x = Vector::init([1, 1, 1]);
-        let y = Vector::init([2, 2, 2]);
-        let result = x.vector_sum(&y);
-
-        assert_eq!([3, 3, 3], result.get_values());
-    }
-
-    #[test]
-    fn one_scalar_adding() {
-        assert_eq!(0, Vector::new().scalar_sum(&Vector::new()));
-        assert_eq!(3, Vector::init([1, 1, 1]).scalar_sum(&Vector::new()));
+    fn scalar_adding() {
+        assert_eq!(0, Vector::scalar_sum(Vector::default(), Vector::default()));
+        assert_eq!(
+            0,
+            Vector::scalar_sum(Vector::new([1, 2, 3]), Vector::new([-3, -2, -1]))
+        );
+        assert_eq!(
+            3,
+            Vector::scalar_sum(Vector::new([0, 0, 1]), Vector::new([1, 1, 0]))
+        )
     }
 }
